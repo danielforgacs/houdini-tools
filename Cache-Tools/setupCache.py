@@ -1,63 +1,54 @@
 #! python
-__version__		= '0.1'
-__author__		= 'forgacs.daniel@gmail.com'
 
-# Houdini version 13
-# usage:
-# sys.path.insert(0, 'd:\Development\Houdini')
-# import setupCache as cs
-# cs.do_cache_setup()
+__version__     = '0.2'
+__author__      = 'forgacs.daniel@gmail.com'
+
+"""
+tested:     Houdini version 14.0
+python:     H14 default
+"""
 
 import hou
 
-def do_cache_setup(cachefolder = '$CACHEFOLDER'):
-	try:
-		selected_node	= hou.selectedNodes()[0]
-	except:
-		print('---> NO SELECTION')
-		selected_node	= None
 
-	if selected_node:
-		root	= hou.node('/obj')
-		geo		= selected_node.parent()
-		null	= geo.createNode('null', 'to_cache_' + selected_node.name())
-		read	= geo.createNode('file')
-		
-		null.setFirstInput(selected_node)
-		read.setFirstInput(null)
-		read.setDisplayFlag(True)
-		read.setRenderFlag(True)
+def setup_cache():
+    nodes           = { 'geo'   : hou.selectedNodes()[0],
+                        'root'  : hou.node('/obj')}
+    
+    nodes['null']   = nodes['geo'].createOutputNode('null', 'TO_CACHE_')
+    nodes['read']   = nodes['null'].createOutputNode('file')
 
-		parmtemplate	= hou.StringParmTemplate("rop", "rop", 1,
-							string_type = hou.stringParmType.NodeReference)
-		
-		read.addSpareParmTuple(parmtemplate)
-		read.parm("filemode").lock(True)
-		read.parm('file').set('`chs(chs("rop") + "/sopoutput")`')
+    for code in ('setDisplayFlag', 'setRenderFlag'):
+        eval('nodes["read"].%s(True)' % (code))
+    
+    parmtemplate    = hou.StringParmTemplate("rop", "rop", 1,
+                            string_type = hou.stringParmType.NodeReference)
 
-		null.moveToGoodPosition()
-		read.moveToGoodPosition()
-		read.setCurrent(True, clear_all_selected = True)
+    nodes['read'].addSpareParmTuple(parmtemplate)
+    nodes['read'].parm("filemode").lock(True)
+    nodes['read'].parm('file').set('`chs(chs("rop") + "/sopoutput")`')
+    nodes['read'].setCurrent(True, clear_all_selected = True)
 
-		if root.node('cache'):
-			ropnet	= root.node('cache')
-		else:
-			ropnet	= root.createNode('ropnet', 'cache')
-		
-		rop	= ropnet.createNode('geometry', selected_node.name())
-		read.parm('rop').set(rop.path())
+    if nodes['root'].node('cache'):
+        nodes['ropnet']  = nodes['root'].node('cache')
+    else:
+        nodes['ropnet']  = nodes['root'].createNode('ropnet', 'cache')
 
-		rop_parms	= {'soppath'	: null.path(),
-						'sopoutput'	: '{0}/$OS/$OS.$F4.bgeo.gz'.format(cachefolder),
-						'trange'	: 2,
-						'mkpath'	: True,
-						'saveretry'	: 2,
-						'@f1'		: '$FSTART',
-						'@f2'		: '$FEND'
-						}
+    nodes['rop'] = nodes['ropnet'].createNode('geometry', nodes['geo'].name())
+    nodes['read'].parm('rop').set(nodes['rop'].path())
 
-		for key in rop_parms:
-			if '@' not in key:
-				rop.parm(key).set(rop_parms[key])
-			else:
-				rop.parm(key[1:]).setExpression(rop_parms[key])
+    rop_parms   = {'soppath'    : nodes['null'].path(),
+                    'sopoutput' : '{0}/$OS/$OS.$F4.bgeo.gz'.format('$CACHE'),
+                    'trange'    : 2,
+                    'mkpath'    : True,
+                    'saveretry' : 2,
+                    '@f1'       : '$FSTART',
+                    '@f2'       : '$FEND + 1'
+                    }
+
+    for key in rop_parms:
+        if '@' not in key:
+            nodes['rop'].parm(key).set(rop_parms[key])
+
+        else:
+            nodes['rop'].parm(key[1:]).setExpression(rop_parms[key])
