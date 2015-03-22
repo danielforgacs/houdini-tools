@@ -38,7 +38,7 @@ def setup_cache():
     nodes['read'].parm('rop').set(nodes['rop'].path())
 
     rop_parms   = {'soppath'    : nodes['null'].path(),
-                    'sopoutput' : '{0}/$OS/$OS.$F4.bgeo.gz'.format('$CACHE'),
+                    'sopoutput' : '{0}/$OS/$OS.$F4.bgeo.sc'.format('$CACHE'),
                     'trange'    : 2,
                     'mkpath'    : True,
                     'saveretry' : 2,
