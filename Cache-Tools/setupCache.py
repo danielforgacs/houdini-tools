@@ -19,7 +19,7 @@ def setup_cache():
     nodes['read']   = nodes['null'].createOutputNode('file')
 
     for code in ('setDisplayFlag', 'setRenderFlag'):
-        eval('nodes["read"].%s(True)' % (code))
+        exec('nodes["read"].%s(True)' % (code))
     
     parmtemplate    = hou.StringParmTemplate("rop", "rop", 1,
                             string_type = hou.stringParmType.NodeReference)
