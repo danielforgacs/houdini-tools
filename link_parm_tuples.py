@@ -6,7 +6,6 @@ __authot__      = 'forgacs.daniel@gmail.com'
 
 """
 links selected nodes multi value parameters
-
 use carefully, it links range parameters too
 """
 
@@ -15,7 +14,7 @@ import hou
 
 
 def get_selection():
-    return hou.selectedNodes() 
+    return hou.selectedNodes()
 
 
 def get_parm_list(node):
@@ -24,7 +23,7 @@ def get_parm_list(node):
     for parms in node.parmTuples():
         if len(parms) > 1:
             parmTuples.append(parms)
-    
+
     return parmTuples
 
 
@@ -39,4 +38,3 @@ def main():
 
                 expression = 'ch("%s")' % parms.__getitem__(0).name()
                 parms.__getitem__(id + 1).setExpression(expression)
-                
