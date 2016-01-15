@@ -3,32 +3,24 @@
 
 
 import unittest
-# import sys
-# import os
-
-
-# modulepath = os.path.dirname(__file__)
-# # houpath = 'C:/Apps/HOUDIN~1.313/houdini/python2.7libs\hou.pyc'
-# houpath = 'c:/Apps/HOUDIN~1.313/houdini/python2.7libs'
-# sys.path.insert(0, houpath)
-
-# if modulepath not in sys.path:
-#     sys.path.insert(0, modulepath)
-
-
-# import hou
-# # import bakeparm
-# # from bakeparm import bake_parm
+import hou
+import bakeparm
 
 
 
 class BakeParmTests(unittest.TestCase):
     def setUp(self):
-        geo = hou.node('/obj').createNode('geo')
+        self.geo = hou.node('/obj').createNode('geo', 'TEST_geo')
 
     def tearDown(self):
-        pass
+        self.geo.destroy()
+
+    def test_get_frame_range_returns_tuple(self):
+        self.assertTrue(type(bakeparm.get_frame_range()) is tuple)
 
 
 def main():
-    pass
+    print('\n'*5)
+    loader = unittest.TestLoader()
+    suite = loader.loadTestsFromTestCase(BakeParmTests)
+    unittest.TextTestRunner(verbosity=2).run(suite)
