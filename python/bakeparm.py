@@ -1,15 +1,15 @@
-'''/
+"""
 bakes houdini chanel expression into
 keys on each frame in the timeline
 
-Houdini 14.0
+Houdini 15.0
 
 todo:
+    - automatical parm selection
+"""
 
-'''
 
-
-__version__     = 'v0.2'
+__version__     = 'v0.3'
 __author__      = 'github/danielforgacs'
 
 
