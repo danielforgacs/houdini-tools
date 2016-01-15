@@ -14,10 +14,6 @@ __author__      = 'github/danielforgacs'
 
 
 import hou
-import time
-
-
-print time.time()
 
 
 def bake_parm(parm):
@@ -54,3 +50,8 @@ def get_frame_range():
     start, end          = (int(get('$FSTART')), int(get('$FEND')))
 
     return (start, end)
+
+
+def main():
+    parm = hou.parm('/obj/geo1/rx')
+    bake_parm(parm)
