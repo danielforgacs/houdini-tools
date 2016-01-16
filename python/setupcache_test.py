@@ -14,6 +14,7 @@ class SetupCacheTests(unittest.TestCase):
         self.out = box.createOutputNode('null', 'OUT_box_geo')
 
         geo.node('file1').destroy()
+        box.createOutputNode('file')
         self.out.setSelected(True)
         self.out.setCurrent(True)
 
@@ -36,6 +37,7 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         box = geo.createNode('box', 'box')
         self.out = box.createOutputNode('null', 'OUT_box_geo')
 
+        box.createOutputNode('file')
         geo.node('file1').destroy()
         self.out.setSelected(True)
         self.out.setCurrent(True)
@@ -43,8 +45,12 @@ class SetupCacheFunctonalTests(unittest.TestCase):
     def test_setup_cache(self):
         setupcache.main2()
 
-        outputs = self.out.outputConnections()
+        # module creates output
+        outputs = self.out.outputs()
         self.assertGreaterEqual(len(outputs), 0)
+
+        # at least one output is output type
+        self.assertIn(hou.SopNode, [type(k) for k in outputs])
 
 
 def main():
@@ -53,7 +59,7 @@ def main():
     suite = loader.loadTestsFromTestCase(SetupCacheTests)
     suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
 
-    # unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(suite)
     unittest.TextTestRunner(verbosity=2).run(suite_func)
 
 
