@@ -27,6 +27,7 @@ class SetupCacheTests(unittest.TestCase):
         self.assertTrue(type(node) is hou.SopNode)
         self.assertTrue(type(node.type()) is hou.SopNodeType)
         self.assertTrue(isinstance(node.type(), hou.SopNodeType))
+        self. assertIsInstance(node.type(), hou.SopNodeType)
 
 
 class SetupCacheFunctonalTests(unittest.TestCase):
@@ -55,7 +56,7 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         # output is output type
         cacheout = outputs[0]
 
-        self.assertTrue(cacheout.type().name(), 'output')
+        self.assertTrue(cacheout.type().name() == 'output')
 
         # output name starts with TO_CACHE
         self.assertTrue('TO_CACHE' in cacheout.name())
@@ -63,7 +64,10 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         # output has one file output
         cachefile = cacheout.outputs()[0]
 
-        self.assertTrue(cachefile.type().name(), 'file')
+        self.assertTrue(cachefile.type().name() == 'file')
+
+        # cache file's name contains selected node's name
+
 
 
 
