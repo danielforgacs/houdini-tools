@@ -4,14 +4,14 @@ set up caching for selected node.
 =================================
 
 
-tested:     Houdini version 14.0
-python:     H14 default
+tested:     Houdini version 15.0
+python:     H15 default
 
 ctrl click uses local cache.
 """
 
 
-__version__     = '0.4'
+__version__     = '0.5'
 __author__      = 'forgacs.daniel@gmail.com'
 
 
@@ -79,6 +79,13 @@ def setup_cache(localcache):
 
 
 
+def get_sop_node_to_cache_from_selection():
+    sop = hou.selectedNodes()[0]
+
+    return sop
+
+
+
 def main(kwargs):
     localcache      = kwargs['ctrlclick']
 
@@ -88,4 +95,3 @@ def main(kwargs):
 
 if __name__ == '__main__':
     pass
-    help(__name__)
