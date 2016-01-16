@@ -58,11 +58,8 @@ class SetupCacheFunctonalTests(HipTest):
         self.assertGreaterEqual(len(outputs), 0)
         cacheout = outputs[len(outputs) - 1]
 
-        ### output is sopnode type
+        ### output is sopnode output type
         self.assertIn(hou.SopNode, [type(k) for k in outputs])
-
-        ### output is output type
-
         self.assertTrue(cacheout.type().name() == 'output')
 
         ### output name starts with TO_CACHE
@@ -78,6 +75,22 @@ class SetupCacheFunctonalTests(HipTest):
 
         ### cache file's name contains selected node's name
         self.assertTrue(self.name in cachefile.name())
+
+        ### cache file is the current selection
+        cachefile = hou.selectedNodes()[0]
+        self.assertTrue(cachefile.type().name() == 'file')
+
+        ### module creates rop network if it doesn't exists
+        geo = cachefile.parent()
+
+        self.assertTrue(geo.path() == '/obj/TEST_geo')
+        self.assertTrue(geo.node('Cache_Ropnet'))
+
+        ### modeule creates sop rop node inside ropnet
+        ### with the name of the node to cache
+        ropnet = geo.node('Cache_Ropnet')
+
+        self.assertTrue(ropnet.node(self.name))
 
 
 
