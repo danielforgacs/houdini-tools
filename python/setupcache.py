@@ -95,7 +95,7 @@ def main(kwargs):
 def main2():
     sop = get_sop_from_selection()
     cacheout = sop.createOutputNode('output', 'TO_CACHE_' + sop.name())
-    cachefile = cacheout.createOutputNode('file', 'cache')
+    cachefile = cacheout.createOutputNode('file', 'CACHE_' + sop.name())
 
 
 if __name__ == '__main__':
