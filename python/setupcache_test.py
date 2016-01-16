@@ -1,4 +1,9 @@
+"""
+tests for cache setup module
+"""
+
 import unittest
+import random
 import hou
 import setupcache
 reload(setupcache)
@@ -6,17 +11,20 @@ reload(setupcache)
 
 
 class SetupCacheTests(unittest.TestCase):
+    """
+    unit tests
+    """
+
     def setUp(self):
         hou.hipFile.clear(suppress_save_prompt=True)
 
         geo = hou.node('/obj').createNode('geo', 'TEST_geo')
-        box = geo.createNode('box', 'box')
-        self.out = box.createOutputNode('null', 'OUT_box_geo')
-
         geo.node('file1').destroy()
-        box.createOutputNode('file')
-        self.out.setSelected(True)
-        self.out.setCurrent(True)
+
+        name = ''. join([random.choice('qwertyuiop') for k in range(10)])
+        box = geo.createNode('box', name)
+        box.setSelected(True)
+        box.setCurrent(True)
 
     def tearDown(self):
         pass
@@ -27,46 +35,54 @@ class SetupCacheTests(unittest.TestCase):
         self.assertTrue(type(node) is hou.SopNode)
         self.assertTrue(type(node.type()) is hou.SopNodeType)
         self.assertTrue(isinstance(node.type(), hou.SopNodeType))
-        self. assertIsInstance(node.type(), hou.SopNodeType)
+        self.assertIsInstance(node.type(), hou.SopNodeType)
 
 
 class SetupCacheFunctonalTests(unittest.TestCase):
+    """
+    functional tests
+    """
+
     def setUp(self):
         hou.hipFile.clear(suppress_save_prompt=True)
 
         geo = hou.node('/obj').createNode('geo', 'TEST_geo')
-        box = geo.createNode('box', 'box')
-        self.out = box.createOutputNode('null', 'OUT_box_geo')
-
-        box.createOutputNode('file')
         geo.node('file1').destroy()
-        self.out.setSelected(True)
-        self.out.setCurrent(True)
+
+        self.name = ''. join([random.choice('qwertyuiop') for k in range(10)])
+        self.box = geo.createNode('box', self.name)
+        self.box.createOutputNode('smooth')
+        self.box.createOutputNode('smooth')
+        self.box.setSelected(True)
+        self.box.setCurrent(True)
 
     def test_setup_cache(self):
         setupcache.main2()
 
-        # module creates output
-        outputs = self.out.outputs()
+        ### module creates output
+        outputs = self.box.outputs()
         self.assertGreaterEqual(len(outputs), 0)
+        cacheout = outputs[len(outputs) - 1]
 
-        # output is sopnode type
+        ### output is sopnode type
         self.assertIn(hou.SopNode, [type(k) for k in outputs])
 
-        # output is output type
-        cacheout = outputs[0]
+        ### output is output type
 
         self.assertTrue(cacheout.type().name() == 'output')
 
-        # output name starts with TO_CACHE
+        ### output name starts with TO_CACHE
         self.assertTrue('TO_CACHE' in cacheout.name())
 
-        # output has one file output
+        ### output's name contains node
+        self.assertTrue(self.name in cacheout.name())
+
+        ### output has one file output
         cachefile = cacheout.outputs()[0]
 
         self.assertTrue(cachefile.type().name() == 'file')
 
-        # cache file's name contains selected node's name
+        ### cache file's name contains selected node's name
 
 
 
