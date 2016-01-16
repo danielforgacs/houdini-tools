@@ -10,37 +10,10 @@ reload(setupcache)
 
 
 
-class SetupCacheTests(unittest.TestCase):
+class HipTest(unittest.TestCase):
     """
-    unit tests
-    """
-
-    def setUp(self):
-        hou.hipFile.clear(suppress_save_prompt=True)
-
-        geo = hou.node('/obj').createNode('geo', 'TEST_geo')
-        geo.node('file1').destroy()
-
-        name = ''. join([random.choice('qwertyuiop') for k in range(10)])
-        box = geo.createNode('box', name)
-        box.setSelected(True)
-        box.setCurrent(True)
-
-    def tearDown(self):
-        pass
-
-    def test__get_sop_from_selection__returns_sop(self):
-        node = setupcache.get_sop_from_selection()
-
-        self.assertTrue(type(node) is hou.SopNode)
-        self.assertTrue(type(node.type()) is hou.SopNodeType)
-        self.assertTrue(isinstance(node.type(), hou.SopNodeType))
-        self.assertIsInstance(node.type(), hou.SopNodeType)
-
-
-class SetupCacheFunctonalTests(unittest.TestCase):
-    """
-    functional tests
+    base class to initiate houdini scene
+    across tests
     """
 
     def setUp(self):
@@ -56,6 +29,27 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         self.box.setSelected(True)
         self.box.setCurrent(True)
 
+
+
+class SetupCacheTests(HipTest):
+    """
+    unit tests
+    """
+
+    def test__get_sop_from_selection__returns_sop(self):
+        node = setupcache.get_sop_from_selection()
+
+        self.assertTrue(type(node) is hou.SopNode)
+        self.assertTrue(type(node.type()) is hou.SopNodeType)
+        self.assertTrue(isinstance(node.type(), hou.SopNodeType))
+        self.assertIsInstance(node.type(), hou.SopNodeType)
+
+
+class SetupCacheFunctonalTests(HipTest):
+    """
+    functional tests
+    """
+
     def test_setup_cache(self):
         setupcache.main2()
 
@@ -64,11 +58,8 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         self.assertGreaterEqual(len(outputs), 0)
         cacheout = outputs[len(outputs) - 1]
 
-        ### output is sopnode type
+        ### output is sopnode output type
         self.assertIn(hou.SopNode, [type(k) for k in outputs])
-
-        ### output is output type
-
         self.assertTrue(cacheout.type().name() == 'output')
 
         ### output name starts with TO_CACHE
@@ -84,6 +75,22 @@ class SetupCacheFunctonalTests(unittest.TestCase):
 
         ### cache file's name contains selected node's name
         self.assertTrue(self.name in cachefile.name())
+
+        ### cache file is the current selection
+        cachefile = hou.selectedNodes()[0]
+        self.assertTrue(cachefile.type().name() == 'file')
+
+        ### module creates rop network if it doesn't exists
+        geo = cachefile.parent()
+
+        self.assertTrue(geo.path() == '/obj/TEST_geo')
+        self.assertTrue(geo.node('Cache_Ropnet'))
+
+        ### modeule creates sop rop node inside ropnet
+        ### with the name of the node to cache
+        ropnet = geo.node('Cache_Ropnet')
+
+        self.assertTrue(ropnet.node(self.name))
 
 
 
