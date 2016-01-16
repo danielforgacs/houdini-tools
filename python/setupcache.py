@@ -97,6 +97,12 @@ def main2():
     cacheout = sop.createOutputNode('output', 'TO_CACHE_' + sop.name())
     cachefile = cacheout.createOutputNode('file', 'CACHE_' + sop.name())
 
+    cachefile.setSelected(True, clear_all_selected=True)
+    cachefile.setCurrent(True, clear_all_selected=True)
+
+    ropnet = sop.parent().createNode('ropnet', 'Cache_Ropnet')
+    ropnet.createNode('geometry', sop.name())
+
 
 if __name__ == '__main__':
     pass
