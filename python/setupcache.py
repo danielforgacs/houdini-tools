@@ -79,7 +79,7 @@ def setup_cache(localcache):
 
 
 
-def get_sop_node_to_cache_from_selection():
+def get_sop_from_selection():
     sop = hou.selectedNodes()[0]
 
     return sop
@@ -91,6 +91,10 @@ def main(kwargs):
 
     setup_cache(localcache)
 
+
+def main2():
+    sop = get_sop_from_selection()
+    sop.createOutputNode('output', 'TO_CACHE_')
 
 
 if __name__ == '__main__':
