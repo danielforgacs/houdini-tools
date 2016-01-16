@@ -83,6 +83,7 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         self.assertTrue(cachefile.type().name() == 'file')
 
         ### cache file's name contains selected node's name
+        self.assertTrue(self.name in cachefile.name())
 
 
 
