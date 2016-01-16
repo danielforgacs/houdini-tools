@@ -49,8 +49,22 @@ class SetupCacheFunctonalTests(unittest.TestCase):
         outputs = self.out.outputs()
         self.assertGreaterEqual(len(outputs), 0)
 
-        # at least one output is output type
+        # output is sopnode type
         self.assertIn(hou.SopNode, [type(k) for k in outputs])
+
+        # output is output type
+        cacheout = outputs[0]
+
+        self.assertTrue(cacheout.type().name(), 'output')
+
+        # output name starts with TO_CACHE
+        self.assertTrue('TO_CACHE' in cacheout.name())
+
+        # output has one file output
+        cachefile = cacheout.outputs()[0]
+
+        self.assertTrue(cachefile.type().name(), 'file')
+
 
 
 def main():
