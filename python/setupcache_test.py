@@ -22,12 +22,12 @@ class HipTest(unittest.TestCase):
         geo = hou.node('/obj').createNode('geo', 'TEST_geo')
         geo.node('file1').destroy()
 
-        self.name = ''. join([random.choice('qwertyuiop') for k in range(10)])
-        self.box = geo.createNode('box', self.name)
-        self.box.createOutputNode('smooth')
-        self.box.createOutputNode('smooth')
-        self.box.setSelected(True)
-        self.box.setCurrent(True)
+        name = ''. join([random.choice('qwertyuiop') for k in range(10)])
+        box = geo.createNode('box', name)
+        box.createOutputNode('smooth')
+        box.createOutputNode('smooth')
+        box.setSelected(True)
+        box.setCurrent(True)
 
 
 # class SetupCacheNewTests(HipTest):
@@ -49,6 +49,9 @@ class SetupCacheTests(HipTest):
     cache setup untit tests
     """
 
+    def setUp(self):
+        pass
+
     def test_unittests_running(self):
         self.assertTrue(True)
 
@@ -58,11 +61,14 @@ class SetupCacheFunctonalTests(HipTest):
     cache setup functional tests
     """
 
-    def test_functest_local_cache(self):
+    def setUp(self):
+        super(SetupCacheFunctonalTests, self).setUp()
+        self.soptocache = hou.selectedNodes()[0]
         setupcache.main({'ctrlclick': True})
 
+    def test_functest_local_cache(self):
         ### module creates output
-        outputs = self.box.outputs()
+        outputs = self.soptocache.outputs()
         self.assertGreaterEqual(len(outputs), 0)
         cacheout = outputs[len(outputs) - 1]
 
@@ -74,16 +80,16 @@ class SetupCacheFunctonalTests(HipTest):
         self.assertTrue('TO_CACHE' in cacheout.name())
 
         ### output's name contains node
-        self.assertTrue(self.name in cacheout.name())
+        self.assertTrue(self.soptocache.name() in cacheout.name())
 
         ### output has one file output
         cachefile = cacheout.outputs()[0]
 
         self.assertTrue(cachefile.type().name() == 'file')
 
-        ### cache file's name is 'READ_' + selected node's name
-        self.assertTrue(self.name in cachefile.name())
-        self.assertTrue(cachefile.name() == 'READ_' + self.name)
+        ## cache file's name is 'READ_' + selected node's name
+        self.assertTrue(self.soptocache.name() in cachefile.name())
+        self.assertTrue(cachefile.name() == 'READ_' + self.soptocache.name())
 
         ### cache file is the current selection
         cachefile = hou.selectedNodes()[0]
@@ -92,14 +98,14 @@ class SetupCacheFunctonalTests(HipTest):
         ### module creates rop network if it doesn't exists
         geo = cachefile.parent()
 
-        self.assertTrue(geo.path() == self.box.parent().path())
+        self.assertTrue(geo.path() == self.soptocache.parent().path())
         self.assertTrue(geo.node('Cache_Ropnet'))
 
         ### modeule creates sop rop node inside ropnet
         ### with the name of the node to cache
-        # ropnet = geo.node('Cache_Ropnet')
+        ropnet = geo.node('Cache_Ropnet')
 
-        # self.assertTrue(ropnet.node(self.name))
+        self.assertTrue(ropnet.node(self.soptocache.name()))
 
         ### cache sop node is linked to output
 

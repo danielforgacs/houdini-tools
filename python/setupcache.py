@@ -72,7 +72,7 @@ def setup_cache(localcache):
     if nodes['root'].node('cache'):
         nodes['ropnet']  = nodes['root'].node('cache')
     else:
-        nodes['ropnet']  = nodes['root'].createNode('ropnet', 'cache')
+        nodes['ropnet']  = nodes['root'].createNode('ropnet', 'Cache_Ropnet')
 
     nodes['ropnet'].moveToGoodPosition()
 
