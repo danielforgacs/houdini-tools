@@ -66,51 +66,62 @@ class SetupCacheFunctonalTests(HipTest):
         self.soptocache = hou.selectedNodes()[0]
         setupcache.main({'ctrlclick': True})
 
-    def test_functest_local_cache(self):
+    def test_local_cache(self):
         ### module creates output
-        outputs = self.soptocache.outputs()
-        self.assertGreaterEqual(len(outputs), 0)
-        cacheout = outputs[len(outputs) - 1]
+        soptocacheoutputs = self.soptocache.outputs()
+        outtocache = soptocacheoutputs[len(soptocacheoutputs) - 1]
+
+        self.assertGreaterEqual(len(soptocacheoutputs), 0)
 
         ### last output is sopnode output type
-        self.assertIn(hou.SopNode, [type(k) for k in outputs])
-        self.assertTrue(cacheout.type().name() == 'output')
+        self.assertIn(hou.SopNode, [type(k) for k in soptocacheoutputs])
+        self.assertTrue(outtocache.type().name() == 'output')
 
         ### output name starts with TO_CACHE
-        self.assertTrue('TO_CACHE' in cacheout.name())
+        self.assertTrue('TO_CACHE' in outtocache.name())
 
-        ### output's name contains node
-        self.assertTrue(self.soptocache.name() in cacheout.name())
+        ### output's name contains sop to cache's name
+        self.assertTrue(self.soptocache.name() in outtocache.name())
 
         ### output has one file output
-        cachefile = cacheout.outputs()[0]
+        cacheread = outtocache.outputs()[0]
 
-        self.assertTrue(cachefile.type().name() == 'file')
+        self.assertTrue(cacheread.type().name() == 'file')
 
         ## cache file's name is 'READ_' + selected node's name
-        self.assertTrue(self.soptocache.name() in cachefile.name())
-        self.assertTrue(cachefile.name() == 'READ_' + self.soptocache.name())
+        self.assertTrue(self.soptocache.name() in cacheread.name())
+        self.assertTrue(cacheread.name() == 'READ_' + self.soptocache.name())
 
         ### cache file is the current selection
-        cachefile = hou.selectedNodes()[0]
-        self.assertTrue(cachefile.type().name() == 'file')
+        selection = hou.selectedNodes()[0]
 
-        ### module creates rop network if it doesn't exists
-        geo = cachefile.parent()
+        self.assertTrue(selection == cacheread)
+        self.assertEqual(selection, cacheread)
+
+        ### module creates local rop network if it doesn't exists
+        geo = cacheread.parent()
+        ropnet = geo.node('Cache_Ropnet')
 
         self.assertTrue(geo.path() == self.soptocache.parent().path())
-        self.assertTrue(geo.node('Cache_Ropnet'))
+        self.assertTrue(ropnet)
 
         ### modeule creates sop rop node inside ropnet
         ### with the name of the node to cache
-        ropnet = geo.node('Cache_Ropnet')
-
         self.assertTrue(ropnet.node(self.soptocache.name()))
 
         ### cache sop node is linked to output
+        rop = ropnet.node(self.soptocache.name())
+        self.assertTrue(rop.parm('soppath').eval() == rop.relativePathTo(outtocache))
 
         ### file output is set to cache folder
         ### and file name contains cached node's name
+        filenamevalue = rop.parm('sopoutput').eval()
+        filename = rop.parm('sopoutput').unexpandedString()
+
+        self.assertEqual(filename, '$CACHE/$OS/$OS.$F4.bgeo.sc')
+        self.assertIn(self.soptocache.name(), filenamevalue)
+
+        ### cache frame range is global render frame range
 
         ### file cache node has spare parameter
         ### linking to the cache rop node
