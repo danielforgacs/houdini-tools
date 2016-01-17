@@ -30,7 +30,6 @@ class HipTest(unittest.TestCase):
         self.box.setCurrent(True)
 
 
-
 class SetupCacheNewTests(HipTest):
     """
     unit tests new
@@ -106,7 +105,7 @@ class SetupCacheTests(HipTest):
     cache setup untit tests
     """
 
-    def test_unittests(self):
+    def test_unittests_running(self):
         self.assertTrue(True)
 
 
@@ -115,8 +114,11 @@ class SetupCacheFunctonalTests(HipTest):
     cache setup functional tests
     """
 
-    def test_functests(self):
+    def test_functests_running(self):
         self.assertTrue(True)
+
+    def test_functest_simpleclick(self):
+        setupcache.main({})
 
 
 def main():
