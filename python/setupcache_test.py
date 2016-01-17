@@ -121,7 +121,14 @@ class SetupCacheFunctonalTests(HipTest):
         self.assertEqual(filename, '$CACHE/$OS/$OS.$F4.bgeo.sc')
         self.assertIn(self.soptocache.name(), filenamevalue)
 
-        ### cache frame range is global render frame range
+        ### cache frame range is global render frame range + 1
+        ### frame range is expression
+        startframe, endframe, stepping = rop.parmTuple('f').eval()
+
+        self.assertTrue(startframe == int(hou.expandString('$FSTART')))
+        self.assertTrue(endframe == int(hou.expandString('$FEND')) + 1)
+        self.assertTrue(rop.parm('f1').expression() == '$FSTART')
+        self.assertTrue(rop.parm('f2').expression() == '$FEND + 1')
 
         ### file cache node has spare parameter
         ### linking to the cache rop node
