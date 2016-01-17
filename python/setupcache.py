@@ -8,6 +8,34 @@ tested:     Houdini version 15.0
 python:     H15 default
 
 ctrl click uses local cache.
+
+shelf tool:
+##########################################################
+import sys
+
+modulepath = 'c:\_store\dev\houdini-tools-env\houdini-tools\python'
+
+if modulepath not in sys.path:
+    sys.path.append(modulepath)
+
+import setupcache
+reload(setupcache)
+
+import setupcache_test
+reload(setupcache_test)
+
+if kwargs['ctrlclick'] and not kwargs['altclick']:
+    print('\n\n--> setting up cache...')
+    setupcache.main2()
+
+elif kwargs.get('altclick'):
+    print('\n\n--> setting up OLD cache...')
+    setupcache.main(kwargs)
+
+else:
+    print('\n\n--> running cache setup tests...')
+    setupcache_test.main()
+##########################################################
 """
 
 
