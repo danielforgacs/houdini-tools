@@ -3,38 +3,36 @@
 set up caching for selected node.
 =================================
 
-
 tested:     Houdini version 15.0
 python:     H15 default
 
 ctrl click uses local cache.
+ctrl alt click runs tests
 
 shelf tool:
 ##########################################################
 import sys
 
-modulepath = 'c:\_store\dev\houdini-tools-env\houdini-tools\python'
+modulepath = '<MODULE PATH>'
 
 if modulepath not in sys.path:
     sys.path.append(modulepath)
 
+
 import setupcache
 reload(setupcache)
 
-import setupcache_test
-reload(setupcache_test)
 
-if kwargs['ctrlclick'] and not kwargs['altclick']:
-    print('\n\n--> setting up cache...')
-    setupcache.main2()
-
-elif kwargs.get('altclick'):
-    print('\n\n--> setting up OLD cache...')
-    setupcache.main(kwargs)
-
-else:
+if kwargs['altclick'] and kwargs['ctrlclick']:
+    import uuid
+    import setupcache_test
+    reload(setupcache_test)
     print('\n\n--> running cache setup tests...')
+    print('test id: ', uuid.uuid1())
     setupcache_test.main()
+else:
+    print('\n\n--> setting up cache...')
+    setupcache.main(kwargs)
 ##########################################################
 """
 
@@ -56,9 +54,6 @@ def setup_cache(localcache):
 
     if localcache:
         nodes['root']   = nodes['geo'].parent()
-
-    print(nodes['geo'])
-    print(nodes['root'])
 
     nodes['null']   = nodes['geo'].createOutputNode('null', 'TO_CACHE_')
     nodes['read']   = nodes['null'].createOutputNode('file')
@@ -115,7 +110,7 @@ def get_sop_from_selection():
 
 
 def main(kwargs):
-    localcache      = kwargs['ctrlclick']
+    localcache      = kwargs.get('ctrlclick', None)
 
     setup_cache(localcache)
 
