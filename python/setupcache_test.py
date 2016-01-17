@@ -31,7 +31,7 @@ class HipTest(unittest.TestCase):
 
 
 
-class SetupCacheTests(HipTest):
+class SetupCacheNewTests(HipTest):
     """
     unit tests
     """
@@ -45,7 +45,7 @@ class SetupCacheTests(HipTest):
         self.assertIsInstance(node.type(), hou.SopNodeType)
 
 
-class SetupCacheFunctonalTests(HipTest):
+class SetupCacheNewFunctonalTests(HipTest):
     """
     functional tests
     """
@@ -106,8 +106,8 @@ class SetupCacheFunctonalTests(HipTest):
 def main():
     print('\n.'*8)
     loader = unittest.TestLoader()
-    suite = loader.loadTestsFromTestCase(SetupCacheTests)
-    suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
+    suite = loader.loadTestsFromTestCase(SetupCacheNewTests)
+    suite_func = loader.loadTestsFromTestCase(SetupCacheNewFunctonalTests)
 
     unittest.TextTestRunner(verbosity=2).run(suite)
     unittest.TextTestRunner(verbosity=2).run(suite_func)
