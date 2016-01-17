@@ -55,8 +55,8 @@ def setup_cache(localcache):
     if localcache:
         nodes['root']   = nodes['geo'].parent()
 
-    nodes['null']   = nodes['geo'].createOutputNode('null', 'TO_CACHE_')
-    nodes['read']   = nodes['null'].createOutputNode('file')
+    nodes['null']   = nodes['geo'].createOutputNode('output', 'TO_CACHE_' + nodes['geo'].name())
+    nodes['read']   = nodes['null'].createOutputNode('file', 'READ_' + nodes['geo'].name())
 
     nodes['read'].setDisplayFlag(True)
     nodes['read'].setRenderFlag(True)

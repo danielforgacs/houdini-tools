@@ -71,28 +71,29 @@ class SetupCacheFunctonalTests(HipTest):
         self.assertTrue(cacheout.type().name() == 'output')
 
         ### output name starts with TO_CACHE
-        # self.assertTrue('TO_CACHE' in cacheout.name())
+        self.assertTrue('TO_CACHE' in cacheout.name())
 
         ### output's name contains node
-        # self.assertTrue(self.name in cacheout.name())
+        self.assertTrue(self.name in cacheout.name())
 
         ### output has one file output
-        # cachefile = cacheout.outputs()[0]
+        cachefile = cacheout.outputs()[0]
 
-        # self.assertTrue(cachefile.type().name() == 'file')
+        self.assertTrue(cachefile.type().name() == 'file')
 
-        ### cache file's name contains selected node's name
-        # self.assertTrue(self.name in cachefile.name())
+        ### cache file's name is 'READ_' + selected node's name
+        self.assertTrue(self.name in cachefile.name())
+        self.assertTrue(cachefile.name() == 'READ_' + self.name)
 
         ### cache file is the current selection
-        # cachefile = hou.selectedNodes()[0]
-        # self.assertTrue(cachefile.type().name() == 'file')
+        cachefile = hou.selectedNodes()[0]
+        self.assertTrue(cachefile.type().name() == 'file')
 
         ### module creates rop network if it doesn't exists
-        # geo = cachefile.parent()
+        geo = cachefile.parent()
 
-        # self.assertTrue(geo.path() == '/obj/TEST_geo')
-        # self.assertTrue(geo.node('Cache_Ropnet'))
+        self.assertTrue(geo.path() == self.box.parent().path())
+        self.assertTrue(geo.node('Cache_Ropnet'))
 
         ### modeule creates sop rop node inside ropnet
         ### with the name of the node to cache
