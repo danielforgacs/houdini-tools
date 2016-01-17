@@ -33,7 +33,7 @@ class HipTest(unittest.TestCase):
 
 class SetupCacheNewTests(HipTest):
     """
-    unit tests
+    unit tests new
     """
 
     def test__get_sop_from_selection__returns_sop(self):
@@ -47,7 +47,7 @@ class SetupCacheNewTests(HipTest):
 
 class SetupCacheNewFunctonalTests(HipTest):
     """
-    functional tests
+    functional tests new
     """
 
     def test_setup_cache(self):
@@ -101,13 +101,35 @@ class SetupCacheNewFunctonalTests(HipTest):
         ### linking to the cache rop node
 
 
+class SetupCacheTests(HipTest):
+    """
+    cache setup untit tests
+    """
+
+    def test_unittests(self):
+        self.assertTrue(True)
+
+
+class SetupCacheFunctonalTests(HipTest):
+    """
+    cache setup functional tests
+    """
+
+    def test_functests(self):
+        self.assertTrue(True)
 
 
 def main():
     print('\n.'*8)
     loader = unittest.TestLoader()
-    suite = loader.loadTestsFromTestCase(SetupCacheNewTests)
-    suite_func = loader.loadTestsFromTestCase(SetupCacheNewFunctonalTests)
+    # suiteNew = loader.loadTestsFromTestCase(SetupCacheNewTests)
+    # suiteNew_func = loader.loadTestsFromTestCase(SetupCacheNewFunctonalTests)
+
+    # unittest.TextTestRunner(verbosity=2).run(suiteNew)
+    # unittest.TextTestRunner(verbosity=2).run(suiteNew_func)
+
+    suite = loader.loadTestsFromTestCase(SetupCacheTests)
+    suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
 
     unittest.TextTestRunner(verbosity=2).run(suite)
     unittest.TextTestRunner(verbosity=2).run(suite_func)
