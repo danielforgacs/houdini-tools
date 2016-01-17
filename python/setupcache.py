@@ -3,11 +3,37 @@
 set up caching for selected node.
 =================================
 
-
 tested:     Houdini version 15.0
 python:     H15 default
 
 ctrl click uses local cache.
+ctrl alt click runs tests
+
+shelf tool:
+##########################################################
+import sys
+
+modulepath = '<MODULE PATH>'
+
+if modulepath not in sys.path:
+    sys.path.append(modulepath)
+
+
+import setupcache
+reload(setupcache)
+
+
+if kwargs['altclick'] and kwargs['ctrlclick']:
+    import uuid
+    import setupcache_test
+    reload(setupcache_test)
+    print('\n\n--> running cache setup tests...')
+    print('test id: ', uuid.uuid1())
+    setupcache_test.main()
+else:
+    print('\n\n--> setting up cache...')
+    setupcache.main(kwargs)
+##########################################################
 """
 
 
@@ -29,11 +55,8 @@ def setup_cache(localcache):
     if localcache:
         nodes['root']   = nodes['geo'].parent()
 
-    print(nodes['geo'])
-    print(nodes['root'])
-
-    nodes['null']   = nodes['geo'].createOutputNode('null', 'TO_CACHE_')
-    nodes['read']   = nodes['null'].createOutputNode('file')
+    nodes['null']   = nodes['geo'].createOutputNode('output', 'TO_CACHE_' + nodes['geo'].name())
+    nodes['read']   = nodes['null'].createOutputNode('file', 'READ_' + nodes['geo'].name())
 
     nodes['read'].setDisplayFlag(True)
     nodes['read'].setRenderFlag(True)
@@ -49,7 +72,7 @@ def setup_cache(localcache):
     if nodes['root'].node('cache'):
         nodes['ropnet']  = nodes['root'].node('cache')
     else:
-        nodes['ropnet']  = nodes['root'].createNode('ropnet', 'cache')
+        nodes['ropnet']  = nodes['root'].createNode('ropnet', 'Cache_Ropnet')
 
     nodes['ropnet'].moveToGoodPosition()
 
@@ -78,30 +101,10 @@ def setup_cache(localcache):
             nodes['rop'].parm(key[1:]).setExpression(rop_parms[key])
 
 
-
-def get_sop_from_selection():
-    sop = hou.selectedNodes()[0]
-
-    return sop
-
-
-
 def main(kwargs):
-    localcache      = kwargs['ctrlclick']
+    localcache      = kwargs.get('ctrlclick', None)
 
     setup_cache(localcache)
-
-
-def main2():
-    sop = get_sop_from_selection()
-    cacheout = sop.createOutputNode('output', 'TO_CACHE_' + sop.name())
-    cachefile = cacheout.createOutputNode('file', 'CACHE_' + sop.name())
-
-    cachefile.setSelected(True, clear_all_selected=True)
-    cachefile.setCurrent(True, clear_all_selected=True)
-
-    ropnet = sop.parent().createNode('ropnet', 'Cache_Ropnet')
-    ropnet.createNode('geometry', sop.name())
 
 
 if __name__ == '__main__':
