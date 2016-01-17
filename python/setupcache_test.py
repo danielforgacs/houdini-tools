@@ -92,6 +92,14 @@ class SetupCacheFunctonalTests(HipTest):
 
         self.assertTrue(ropnet.node(self.name))
 
+        ### cache sop node is linked to output
+
+        ### file output is set to cache folder
+        ### and file name contains cached node's name
+
+        ### file cache node has spare parameter
+        ### linking to the cache rop node
+
 
 
 
