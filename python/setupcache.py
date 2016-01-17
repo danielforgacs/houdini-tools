@@ -101,30 +101,10 @@ def setup_cache(localcache):
             nodes['rop'].parm(key[1:]).setExpression(rop_parms[key])
 
 
-
-def get_sop_from_selection():
-    sop = hou.selectedNodes()[0]
-
-    return sop
-
-
-
 def main(kwargs):
     localcache      = kwargs.get('ctrlclick', None)
 
     setup_cache(localcache)
-
-
-def main2():
-    sop = get_sop_from_selection()
-    cacheout = sop.createOutputNode('output', 'TO_CACHE_' + sop.name())
-    cachefile = cacheout.createOutputNode('file', 'CACHE_' + sop.name())
-
-    cachefile.setSelected(True, clear_all_selected=True)
-    cachefile.setCurrent(True, clear_all_selected=True)
-
-    ropnet = sop.parent().createNode('ropnet', 'Cache_Ropnet')
-    ropnet.createNode('geometry', sop.name())
 
 
 if __name__ == '__main__':
