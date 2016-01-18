@@ -143,14 +143,16 @@ class SetupCacheFunctonalTests(HipTest):
         self.assertTrue(rop.parm('savebackground').eval())
 
     def test_01_local_cache(self):
-        setupcache.main({'ctrlclick': True})
+        local = True
+        setupcache.main({'ctrlclick': local})
 
-        self.functional_test(local=True)
+        self.functional_test(local=local)
 
     def test_02_global_cache(self):
-        setupcache.main({'ctrlclick': False})
+        local = False
+        setupcache.main({'ctrlclick': local})
 
-        self.functional_test(local=False)
+        self.functional_test(local=local)
 
 
 
@@ -159,7 +161,7 @@ def main():
     suite = loader.loadTestsFromTestCase(SetupCacheTests)
     suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
 
-    # unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(suite)
     unittest.TextTestRunner(verbosity=2).run(suite_func)
 
 
