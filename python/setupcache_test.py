@@ -30,20 +30,6 @@ class HipTest(unittest.TestCase):
         box.setCurrent(True)
 
 
-# class SetupCacheNewTests(HipTest):
-#     """
-#     unit tests new
-#     """
-
-#     def test__get_sop_from_selection__returns_sop(self):
-#         node = setupcache.get_sop_from_selection()
-
-#         self.assertTrue(type(node) is hou.SopNode)
-#         self.assertTrue(type(node.type()) is hou.SopNodeType)
-#         self.assertTrue(isinstance(node.type(), hou.SopNodeType))
-#         self.assertIsInstance(node.type(), hou.SopNodeType)
-
-
 class SetupCacheTests(HipTest):
     """
     cache setup untit tests
@@ -64,9 +50,12 @@ class SetupCacheFunctonalTests(HipTest):
     def setUp(self):
         super(SetupCacheFunctonalTests, self).setUp()
         self.soptocache = hou.selectedNodes()[0]
-        setupcache.main({'ctrlclick': True})
 
-    def test_local_cache(self):
+    def functional_test(self, local=True):
+        """
+        unform test for local & global cache setups.
+        called from separate tests with argument
+        """
         ### module creates output
         soptocacheoutputs = self.soptocache.outputs()
         outtocache = soptocacheoutputs[len(soptocacheoutputs) - 1]
@@ -100,7 +89,11 @@ class SetupCacheFunctonalTests(HipTest):
 
         ### module creates local rop network if it doesn't exists
         geo = cacheread.parent()
-        ropnet = geo.node('Cache_Ropnet')
+
+        if local:
+            ropnet = geo.node('Cache_Ropnet')
+        else:
+            ropnet = hou.node('/obj/Cache_Ropnet')
 
         self.assertTrue(geo.path() == self.soptocache.parent().path())
         self.assertTrue(ropnet)
@@ -109,9 +102,13 @@ class SetupCacheFunctonalTests(HipTest):
         ### with the name of the node to cache
         self.assertTrue(ropnet.node(self.soptocache.name()))
 
-        ### cache sop node is linked to output
         rop = ropnet.node(self.soptocache.name())
-        self.assertTrue(rop.parm('soppath').eval() == rop.relativePathTo(outtocache))
+
+        ### cache sop node is linked to output
+        if local:
+            self.assertEqual(rop.parm('soppath').eval(), rop.relativePathTo(outtocache))
+        else:
+            self.assertEqual(rop.parm('soppath').eval(), outtocache.path())
 
         ### file output is set to cache folder
         ### and file name contains cached node's name
@@ -133,7 +130,11 @@ class SetupCacheFunctonalTests(HipTest):
         ### file cache node has spare parameter
         ### linking to the cache rop node
         self.assertTrue(cacheread.parm('rop'))
-        self.assertEqual(cacheread.relativePathTo(rop), cacheread.parm('rop').eval())
+
+        if local:
+            self.assertEqual(cacheread.relativePathTo(rop), cacheread.parm('rop').eval())
+        else:
+            self.assertEqual(rop.path(), cacheread.parm('rop').eval())
 
         ### test for various rop node parms
         self.assertEqual(rop.parm('trange').eval(), 2)
@@ -141,9 +142,21 @@ class SetupCacheFunctonalTests(HipTest):
         self.assertEqual(rop.parm('saveretry').eval(), 2)
         self.assertTrue(rop.parm('savebackground').eval())
 
+    def test_01_local_cache(self):
+        local = True
+        setupcache.main({'ctrlclick': local})
+
+        self.functional_test(local=local)
+
+    def test_02_global_cache(self):
+        local = False
+        setupcache.main({'ctrlclick': local})
+
+        self.functional_test(local=local)
+
+
 
 def main():
-    print('\n.'*8)
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(SetupCacheTests)
     suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
