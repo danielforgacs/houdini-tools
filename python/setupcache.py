@@ -85,20 +85,19 @@ def setup_cache(localcache):
                     'trange'    : 2,
                     'mkpath'    : True,
                     'saveretry' : 2,
-                    '@f1'       : '$FSTART',
-                    '@f2'       : '$FEND + 1'
                     }
+
+    ropparmexpressions = {'f1': '$FSTART', 'f2': '$FEND + 1'}
 
     if localcache:
         rop_parms['soppath'] = nodes['rop'].relativePathTo(nodes['null'])
         nodes['read'].parm('rop').set(nodes['read'].relativePathTo(nodes['rop']))
 
     for key in rop_parms:
-        if '@' not in key:
-            nodes['rop'].parm(key).set(rop_parms[key])
+        nodes['rop'].parm(key).set(rop_parms[key])
 
-        else:
-            nodes['rop'].parm(key[1:]).setExpression(rop_parms[key])
+    for key in ropparmexpressions:
+        nodes['rop'].parm(key).setExpression(ropparmexpressions[key])
 
 
 def main(kwargs):
