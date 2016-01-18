@@ -92,7 +92,6 @@ def setup_cache(localcache):
     if localcache:
         rop_parms['soppath'] = nodes['rop'].relativePathTo(nodes['null'])
         nodes['read'].parm('rop').set(nodes['read'].relativePathTo(nodes['rop']))
-        # nodes['read'].parm('rop').set('111')
 
     for key in rop_parms:
         if '@' not in key:
