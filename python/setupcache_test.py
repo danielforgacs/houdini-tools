@@ -132,7 +132,14 @@ class SetupCacheFunctonalTests(HipTest):
 
         ### file cache node has spare parameter
         ### linking to the cache rop node
+        self.assertTrue(cacheread.parm('rop'))
+        self.assertEqual(cacheread.relativePathTo(rop), cacheread.parm('rop').eval())
 
+        ### test for various rop node parms
+        self.assertEqual(rop.parm('trange').eval(), 2)
+        self.assertTrue(rop.parm('mkpath').eval())
+        self.assertEqual(rop.parm('saveretry').eval(), 2)
+        self.assertTrue(rop.parm('savebackground').eval())
 
 
 def main():
