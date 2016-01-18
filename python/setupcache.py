@@ -50,20 +50,20 @@ except:
 
 
 def setup_cache(localcache):
-    nodes           = { 'geo'   : hou.selectedNodes()[0],
-                        'root'  : hou.node('/obj')}
+    nodes = {'geo': hou.selectedNodes()[0],
+            'root': hou.node('/obj')}
 
     if localcache:
-        nodes['root']   = nodes['geo'].parent()
+        nodes['root'] = nodes['geo'].parent()
 
-    nodes['null']   = nodes['geo'].createOutputNode('output', 'TO_CACHE_' + nodes['geo'].name())
-    nodes['read']   = nodes['null'].createOutputNode('file', 'READ_' + nodes['geo'].name())
+    nodes['null'] = nodes['geo'].createOutputNode('output', 'TO_CACHE_' + nodes['geo'].name())
+    nodes['read'] = nodes['null'].createOutputNode('file', 'READ_' + nodes['geo'].name())
 
     nodes['read'].setDisplayFlag(True)
     nodes['read'].setRenderFlag(True)
 
-    parmtemplate    = hou.StringParmTemplate('rop', 'rop', 1,
-                            string_type = hou.stringParmType.NodeReference)
+    parmtemplate = hou.StringParmTemplate('rop', 'rop', 1,
+                    string_type = hou.stringParmType.NodeReference)
 
     nodes['read'].addSpareParmTuple(parmtemplate)
     nodes['read'].parm("filemode").lock(True)
@@ -71,21 +71,21 @@ def setup_cache(localcache):
     nodes['read'].setCurrent(True, clear_all_selected = True)
 
     if nodes['root'].node('cache'):
-        nodes['ropnet']  = nodes['root'].node('cache')
+        nodes['ropnet'] = nodes['root'].node('cache')
     else:
-        nodes['ropnet']  = nodes['root'].createNode('ropnet', 'Cache_Ropnet')
+        nodes['ropnet'] = nodes['root'].createNode('ropnet', 'Cache_Ropnet')
 
     nodes['ropnet'].moveToGoodPosition()
 
     nodes['rop'] = nodes['ropnet'].createNode('geometry', nodes['geo'].name())
     nodes['read'].parm('rop').set(nodes['rop'].path())
 
-    rop_parms   = {'soppath'    : nodes['null'].path(),
-                    'sopoutput' : '{0}/$OS/$OS.$F4.bgeo.sc'.format('$CACHE'),
-                    'trange'    : 2,
-                    'mkpath'    : True,
-                    'saveretry' : 2,
-                    }
+    rop_parms = {'soppath': nodes['null'].path(),
+                'sopoutput': '{0}/$OS/$OS.$F4.bgeo.sc'.format('$CACHE'),
+                'trange': 2,
+                'mkpath': True,
+                'saveretry': 2,
+                }
 
     ropparmexpressions = {'f1': '$FSTART', 'f2': '$FEND + 1'}
 
@@ -98,7 +98,7 @@ def setup_cache(localcache):
 
 
 def main(kwargs):
-    localcache      = kwargs.get('ctrlclick', None)
+    localcache = kwargs.get('ctrlclick', None)
 
     setup_cache(localcache)
 
