@@ -13,7 +13,7 @@ shelf tool:
 ##########################################################
 import sys
 
-modulepath = '<MODULE PATH>'
+modulepath = 'c:\_store\dev\houdini-tools-env\houdini-tools\python'
 
 if modulepath not in sys.path:
     sys.path.append(modulepath)
@@ -27,8 +27,9 @@ if kwargs['altclick'] and kwargs['ctrlclick']:
     import uuid
     import setupcache_test
     reload(setupcache_test)
+
     print('\n\n--> running cache setup tests...')
-    print('test id: ', uuid.uuid1())
+    print '--> test id: ', uuid.uuid1()
     setupcache_test.main()
 else:
     print('\n\n--> setting up cache...')

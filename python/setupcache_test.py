@@ -64,9 +64,10 @@ class SetupCacheFunctonalTests(HipTest):
     def setUp(self):
         super(SetupCacheFunctonalTests, self).setUp()
         self.soptocache = hou.selectedNodes()[0]
-        setupcache.main({'ctrlclick': True})
 
     def test_local_cache(self):
+        setupcache.main({'ctrlclick': True})
+
         ### module creates output
         soptocacheoutputs = self.soptocache.outputs()
         outtocache = soptocacheoutputs[len(soptocacheoutputs) - 1]
@@ -143,7 +144,6 @@ class SetupCacheFunctonalTests(HipTest):
 
 
 def main():
-    print('\n.'*8)
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(SetupCacheTests)
     suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
