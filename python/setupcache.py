@@ -80,7 +80,7 @@ def setup_cache(localcache):
     nodes['rop'] = nodes['ropnet'].createNode('geometry', nodes['geo'].name())
     nodes['read'].parm('rop').set(nodes['rop'].path())
 
-    rop_parms = {'soppath': nodes['null'].path(),
+    ropparms = {'soppath': nodes['null'].path(),
                 'sopoutput': '{0}/$OS/$OS.$F4.bgeo.sc'.format('$CACHE'),
                 'trange': 2,
                 'mkpath': True,
@@ -90,10 +90,10 @@ def setup_cache(localcache):
     ropparmexpressions = {'f1': '$FSTART', 'f2': '$FEND + 1'}
 
     if localcache:
-        rop_parms['soppath'] = nodes['rop'].relativePathTo(nodes['null'])
+        ropparms['soppath'] = nodes['rop'].relativePathTo(nodes['null'])
         nodes['read'].parm('rop').set(nodes['read'].relativePathTo(nodes['rop']))
 
-    nodes['rop'].setParms(rop_parms)
+    nodes['rop'].setParms(ropparms)
     nodes['rop'].setParmExpressions(ropparmexpressions)
 
 
