@@ -93,11 +93,8 @@ def setup_cache(localcache):
         rop_parms['soppath'] = nodes['rop'].relativePathTo(nodes['null'])
         nodes['read'].parm('rop').set(nodes['read'].relativePathTo(nodes['rop']))
 
-    for key in rop_parms:
-        nodes['rop'].parm(key).set(rop_parms[key])
-
-    for key in ropparmexpressions:
-        nodes['rop'].parm(key).setExpression(ropparmexpressions[key])
+    nodes['rop'].setParms(rop_parms)
+    nodes['rop'].setParmExpressions(ropparmexpressions)
 
 
 def main(kwargs):
