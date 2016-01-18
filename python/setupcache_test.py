@@ -122,10 +122,10 @@ class SetupCacheFunctonalTests(HipTest):
         ### frame range is expression
         startframe, endframe, stepping = rop.parmTuple('f').eval()
 
-        self.assertTrue(startframe == int(hou.expandString('$FSTART')))
-        self.assertTrue(endframe == int(hou.expandString('$FEND')) + 1)
-        self.assertTrue(rop.parm('f1').expression() == '$FSTART')
-        self.assertTrue(rop.parm('f2').expression() == '$FEND + 1')
+        self.assertEqual(startframe, int(hou.expandString('$FSTART')))
+        self.assertEqual(endframe, int(hou.expandString('$FEND')) + 1)
+        self.assertEqual(rop.parm('f1').expression(), '$FSTART')
+        self.assertEqual(rop.parm('f2').expression(), '$FEND + 1')
 
         ### file cache node has spare parameter
         ### linking to the cache rop node
