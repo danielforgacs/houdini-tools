@@ -30,20 +30,6 @@ class HipTest(unittest.TestCase):
         box.setCurrent(True)
 
 
-# class SetupCacheNewTests(HipTest):
-#     """
-#     unit tests new
-#     """
-
-#     def test__get_sop_from_selection__returns_sop(self):
-#         node = setupcache.get_sop_from_selection()
-
-#         self.assertTrue(type(node) is hou.SopNode)
-#         self.assertTrue(type(node.type()) is hou.SopNodeType)
-#         self.assertTrue(isinstance(node.type(), hou.SopNodeType))
-#         self.assertIsInstance(node.type(), hou.SopNodeType)
-
-
 class SetupCacheTests(HipTest):
     """
     cache setup untit tests
@@ -66,6 +52,10 @@ class SetupCacheFunctonalTests(HipTest):
         self.soptocache = hou.selectedNodes()[0]
 
     def functional_test(self, local=True):
+        """
+        unform test for local & global cache setups.
+        called from separate tests with argument
+        """
         ### module creates output
         soptocacheoutputs = self.soptocache.outputs()
         outtocache = soptocacheoutputs[len(soptocacheoutputs) - 1]
