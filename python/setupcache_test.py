@@ -36,10 +36,64 @@ class SetupCacheTests(HipTest):
     """
 
     def setUp(self):
-        pass
+        super(SetupCacheTests, self).setUp()
 
     def test_unittests_running(self):
         self.assertTrue(True)
+
+    def test__get_sop_from_selection__returns_node(self):
+        self.assertTrue(setupcache.get_sop_from_selection())
+
+    def test__get_sop_from_selection__returns_sop(self):
+        node = setupcache.get_sop_from_selection()
+
+        self.assertIsInstance(node, hou.SopNode)
+
+    def test__get_sop_from_selection__no_selection_gives_error(self):
+        selection = hou.selectedNodes()[0]
+        selection.setCurrent(False)
+
+        self.assertRaises(setupcache.get_sop_from_selection)
+
+    def test__create_nodes__returns_node_dict(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        self.assertIsInstance(nodeslocal, dict)
+        self.assertIsInstance(nodesglobal, dict)
+
+    def test__create_nodes__returns_number_of_nodes(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        self.assertEqual(len(nodeslocal), 1)
+        self.assertEqual(len(nodesglobal), 1)
+
+    def test__create_nodes__returns_houdini_nodes(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        for node in nodeslocal:
+            self.assertIsInstance(nodeslocal[node], hou.Node)
+            self.assertIsInstance(nodesglobal[node], hou.Node)
+
+    def test__create_nodes__nodes_type_match(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        localtypes = {'root': 'geo'}
+
+        for node in nodeslocal:
+            self.assertEqual(nodeslocal[node].type().name(), localtypes[node])
+
+    def test__create_nodes__global_local_nodes_match_except_root(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
 
 
 class SetupCacheFunctonalTests(HipTest):
@@ -122,10 +176,10 @@ class SetupCacheFunctonalTests(HipTest):
         ### frame range is expression
         startframe, endframe, stepping = rop.parmTuple('f').eval()
 
-        self.assertTrue(startframe == int(hou.expandString('$FSTART')))
-        self.assertTrue(endframe == int(hou.expandString('$FEND')) + 1)
-        self.assertTrue(rop.parm('f1').expression() == '$FSTART')
-        self.assertTrue(rop.parm('f2').expression() == '$FEND + 1')
+        self.assertEqual(startframe, int(hou.expandString('$FSTART')))
+        self.assertEqual(endframe, int(hou.expandString('$FEND')) + 1)
+        self.assertEqual(rop.parm('f1').expression(), '$FSTART')
+        self.assertEqual(rop.parm('f2').expression(), '$FEND + 1')
 
         ### file cache node has spare parameter
         ### linking to the cache rop node
@@ -161,8 +215,8 @@ def main():
     suite = loader.loadTestsFromTestCase(SetupCacheTests)
     suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
 
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    unittest.TextTestRunner(verbosity=2).run(suite_func)
+    unittest.TextTestRunner(verbosity=1).run(suite)
+    unittest.TextTestRunner(verbosity=1).run(suite_func)
 
 
 if __name__ == '__main__':
