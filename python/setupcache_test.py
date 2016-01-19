@@ -36,10 +36,24 @@ class SetupCacheTests(HipTest):
     """
 
     def setUp(self):
-        pass
+        super(SetupCacheTests, self).setUp()
 
     def test_unittests_running(self):
         self.assertTrue(True)
+
+    def test__get_sop_from_selection__returns_node(self):
+        self.assertTrue(setupcache.get_sop_from_selection())
+
+    def test__get_sop_from_selection__returns_sop(self):
+        node = setupcache.get_sop_from_selection()
+
+        self.assertIsInstance(node, hou.SopNode)
+
+    def test__get_sop_from_selection__no_selection_gives_error(self):
+        selection = hou.selectedNodes()[0]
+        selection.setCurrent(False)
+
+        self.assertRaises(setupcache.get_sop_from_selection)
 
 
 class SetupCacheFunctonalTests(HipTest):
@@ -161,8 +175,8 @@ def main():
     suite = loader.loadTestsFromTestCase(SetupCacheTests)
     suite_func = loader.loadTestsFromTestCase(SetupCacheFunctonalTests)
 
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    unittest.TextTestRunner(verbosity=2).run(suite_func)
+    unittest.TextTestRunner(verbosity=1).run(suite)
+    unittest.TextTestRunner(verbosity=1).run(suite_func)
 
 
 if __name__ == '__main__':
