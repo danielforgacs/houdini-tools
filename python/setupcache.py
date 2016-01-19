@@ -66,15 +66,21 @@ def get_sop_from_selection():
         raise Exception('>>> No Selection...')
 
 
-def setup_cache(localcache):
-    nodes = {'geo': get_sop_from_selection(),
-            'root': hou.node('/obj')}
+def create_nodes(localcache, soptocache):
+    nodes = {'root': hou.node('/obj')}
 
     if localcache:
-        nodes['root'] = nodes['geo'].parent()
+        nodes['root'] = soptocache.parent()
 
-    nodes['null'] = nodes['geo'].createOutputNode('output', 'TO_CACHE_' + nodes['geo'].name())
-    nodes['read'] = nodes['null'].createOutputNode('file', 'READ_' + nodes['geo'].name())
+    return nodes
+
+
+def setup_cache(localcache):
+    soptocache = get_sop_from_selection()
+    nodes = create_nodes(localcache=localcache, soptocache=soptocache)
+
+    nodes['null'] = soptocache.createOutputNode('output', 'TO_CACHE_' + soptocache.name())
+    nodes['read'] = nodes['null'].createOutputNode('file', 'READ_' + soptocache.name())
 
     nodes['read'].setDisplayFlag(True)
     nodes['read'].setRenderFlag(True)
@@ -94,7 +100,7 @@ def setup_cache(localcache):
 
     nodes['ropnet'].moveToGoodPosition()
 
-    nodes['rop'] = nodes['ropnet'].createNode('geometry', nodes['geo'].name())
+    nodes['rop'] = nodes['ropnet'].createNode('geometry', soptocache.name())
     nodes['read'].parm('rop').set(nodes['rop'].path())
 
     ropparms = {'soppath': nodes['null'].path(),
