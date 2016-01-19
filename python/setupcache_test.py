@@ -95,6 +95,19 @@ class SetupCacheTests(HipTest):
         nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
         nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
 
+        nodeslocal.pop('root')
+        nodesglobal.pop('root')
+
+        self.assertEqual(nodeslocal, nodesglobal)
+
+    def test__create_nodes__roots_are_proper_nodes(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        self.assertEqual(nodeslocal['root'], selection.parent())
+        self.assertEqual(nodesglobal['root'], hou.node('/obj'))
+
 
 class SetupCacheFunctonalTests(HipTest):
     """
