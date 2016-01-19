@@ -55,6 +55,46 @@ class SetupCacheTests(HipTest):
 
         self.assertRaises(setupcache.get_sop_from_selection)
 
+    def test__create_nodes__returns_node_dict(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        self.assertIsInstance(nodeslocal, dict)
+        self.assertIsInstance(nodesglobal, dict)
+
+    def test__create_nodes__returns_number_of_nodes(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        self.assertEqual(len(nodeslocal), 1)
+        self.assertEqual(len(nodesglobal), 1)
+
+    def test__create_nodes__returns_houdini_nodes(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        for node in nodeslocal:
+            self.assertIsInstance(nodeslocal[node], hou.Node)
+            self.assertIsInstance(nodesglobal[node], hou.Node)
+
+    def test__create_nodes__nodes_type_match(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
+        localtypes = {'root': 'geo'}
+
+        for node in nodeslocal:
+            self.assertEqual(nodeslocal[node].type().name(), localtypes[node])
+
+    def test__create_nodes__global_local_nodes_match_except_root(self):
+        selection = hou.selectedNodes()[0]
+        nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
+        nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
+
 
 class SetupCacheFunctonalTests(HipTest):
     """
