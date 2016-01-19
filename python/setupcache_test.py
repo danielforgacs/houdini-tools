@@ -68,8 +68,8 @@ class SetupCacheTests(HipTest):
         nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
         nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
 
-        self.assertEqual(len(nodeslocal), 2)
-        self.assertEqual(len(nodesglobal), 2)
+        self.assertEqual(len(nodeslocal), 3)
+        self.assertEqual(len(nodesglobal), 3)
 
     def test__create_nodes__returns_houdini_nodes(self):
         selection = hou.selectedNodes()[0]
@@ -86,7 +86,8 @@ class SetupCacheTests(HipTest):
         nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
 
         localtypes = {'root': 'geo',
-                        'null': 'output'}
+                        'null': 'output',
+                        'read': 'file'}
 
         for node in nodeslocal:
             self.assertEqual(nodeslocal[node].type().name(), localtypes[node])
@@ -109,6 +110,15 @@ class SetupCacheTests(HipTest):
 
         self.assertEqual(nodeslocal['root'], selection.parent())
         self.assertEqual(nodesglobal['root'], hou.node('/obj'))
+
+    def test_file_nodes_are_displayed_and_rendered(self):
+        nodeslocal = setupcache.setup_cache({'ctrlclick': True})
+
+        self.assertTrue(nodeslocal['read'].isRenderFlagSet())
+
+        nodesglobal = setupcache.setup_cache({'ctrlclick': False})
+
+        self.assertTrue(nodesglobal['read'].isRenderFlagSet())
 
 
 class SetupCacheFunctonalTests(HipTest):
