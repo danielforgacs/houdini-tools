@@ -96,12 +96,11 @@ class SetupCacheTests(HipTest):
         nodeslocal = setupcache.create_nodes(localcache=True, soptocache=selection)
         nodesglobal = setupcache.create_nodes(localcache=False, soptocache=selection)
 
-        # self.assertEqual(nodeslocal['root'].name(), nodesglobal['root'].name())
-
         nodeslocal.pop('root')
         nodesglobal.pop('root')
 
-        # self.assertEqual(nodeslocal, nodesglobal)
+        for key in nodeslocal:
+            self.assertEqual(nodeslocal[key].name() + '1', nodesglobal[key].name())
 
     def test__create_nodes__roots_are_proper_nodes(self):
         selection = hou.selectedNodes()[0]
