@@ -69,6 +69,7 @@ def get_sop_from_selection():
 def create_nodes(localcache, soptocache):
     nodes = {'root': hou.node('/obj')}
     nodes['null'] = soptocache.createOutputNode('output', 'TO_CACHE_' + soptocache.name())
+    nodes['read'] = nodes['null'].createOutputNode('file', 'READ_' + soptocache.name())
 
     if localcache:
         nodes['root'] = soptocache.parent()
@@ -76,14 +77,16 @@ def create_nodes(localcache, soptocache):
     return nodes
 
 
+def set_parms(nodes):
+    nodes['read'].setDisplayFlag(True)
+    nodes['read'].setRenderFlag(True)
+
+
 def setup_cache(localcache):
     soptocache = get_sop_from_selection()
     nodes = create_nodes(localcache=localcache, soptocache=soptocache)
 
-    nodes['read'] = nodes['null'].createOutputNode('file', 'READ_' + soptocache.name())
-
-    nodes['read'].setDisplayFlag(True)
-    nodes['read'].setRenderFlag(True)
+    set_parms(nodes)
 
     parmtemplate = hou.StringParmTemplate('rop', 'rop', 1,
                     string_type = hou.stringParmType.NodeReference)
@@ -118,6 +121,8 @@ def setup_cache(localcache):
 
     nodes['rop'].setParms(ropparms)
     nodes['rop'].setParmExpressions(ropparmexpressions)
+
+    return nodes
 
 
 def main(kwargs):
