@@ -68,6 +68,7 @@ def get_sop_from_selection():
 
 def create_nodes(localcache, soptocache):
     nodes = {'root': hou.node('/obj')}
+    nodes['null'] = soptocache.createOutputNode('output', 'TO_CACHE_' + soptocache.name())
 
     if localcache:
         nodes['root'] = soptocache.parent()
@@ -79,7 +80,6 @@ def setup_cache(localcache):
     soptocache = get_sop_from_selection()
     nodes = create_nodes(localcache=localcache, soptocache=soptocache)
 
-    nodes['null'] = soptocache.createOutputNode('output', 'TO_CACHE_' + soptocache.name())
     nodes['read'] = nodes['null'].createOutputNode('file', 'READ_' + soptocache.name())
 
     nodes['read'].setDisplayFlag(True)
