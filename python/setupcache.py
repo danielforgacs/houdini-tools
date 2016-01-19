@@ -28,7 +28,11 @@ if kwargs['altclick'] and kwargs['ctrlclick']:
     import setupcache_test
     reload(setupcache_test)
 
-    print('\n\n--> running cache setup tests...')
+    print('\n')
+    print('/'*50)
+    print('/'*50)
+
+    print('\n--> running cache setup tests...')
     print '--> test id: ', uuid.uuid1()
     setupcache_test.main()
 else:
@@ -49,8 +53,21 @@ except:
     pass
 
 
+def get_sop_from_selection():
+    selection = hou.selectedNodes()
+
+    if selection:
+        soptocache = selection[0]
+
+        return soptocache
+    else:
+        print('>>> No Selection...')
+
+        raise Exception('>>> No Selection...')
+
+
 def setup_cache(localcache):
-    nodes = {'geo': hou.selectedNodes()[0],
+    nodes = {'geo': get_sop_from_selection(),
             'root': hou.node('/obj')}
 
     if localcache:
